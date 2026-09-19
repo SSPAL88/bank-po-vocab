@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BankPO VocabMaster | SBI PO & IBPS PO Vocabulary</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Celebration Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Top App Navigation & Branding -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">₹</div>
+        <div>
+          <h1 class="brand-title">BankPO VocabMaster</h1>
+          <p class="brand-tagline">High-Frequency Editorial Vocabulary for SBI PO • IBPS PO • RBI Grade B</p>
+        </div>
+      </div>
+
+      <!-- Realtime Progress Stats -->
+      <div class="stats-bar">
+        <div class="stat-item" title="Current Daily Streak">
+          <span>🔥</span>
+          <span>Streak: <span class="stat-val" id="stat-streak">0</span></span>
+        </div>
+        <div class="stat-item" title="Overall Accuracy">
+          <span>🎯</span>
+          <span>Accuracy: <span class="stat-val" id="stat-accuracy">0%</span></span>
+        </div>
+        <div class="stat-item" title="Words Explored">
+          <span>📖</span>
+          <span>Words: <span class="stat-val" id="stat-words-count">0 / 20</span></span>
+        </div>
+        <button class="btn btn-sm btn-outline" id="btn-toggle-theme" title="Toggle Dark/Light Mode">🌙 Dark Mode</button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-btn active" data-tab="flashcards">
+        <span>📇</span> Flashcard Drills
+      </button>
+      <button class="nav-btn" data-tab="quiz">
+        <span>⏱️</span> Timed Exam MCQ
+      </button>
+      <button class="nav-btn" data-tab="polarity">
+        <span>🎭</span> Tone Polarity Challenge
+      </button>
+      <button class="nav-btn" data-tab="cloze">
+        <span>📰</span> Editorial Cloze
+      </button>
+      <button class="nav-btn" data-tab="mistakes">
+        <span>🛡️</span> Review Vault
+        <span class="badge-counter" id="vault-badge-count" style="display: none;">0</span>
+      </button>
+      <button class="nav-btn" data-tab="dict">
+        <span>📚</span> Word Bank
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Content Body -->
+  <main class="main-wrapper">
+
+    <!-- ============================================== -->
+    <!-- TAB 1: FLASHCARDS -->
+    <!-- ============================================== -->
+    <section id="view-flashcards" class="tab-view active">
+      <div class="flashcard-container">
+        <!-- Card Toolbar -->
+        <div class="card-toolbar">
+          <select id="flashcard-tier-filter" class="select-filter">
+            <option value="all">All Tiers (Complete Deck)</option>
+            <option value="Tier 1">Tier 1: Foundation (Clerk / RRB)</option>
+            <option value="Tier 2">Tier 2: Intermediate (IBPS PO)</option>
+            <option value="Tier 3">Tier 3: Advanced (SBI PO / RBI Grade B)</option>
+            <option value="bookmarks">⭐ Bookmarked Words Only</option>
+          </select>
+          <span class="card-counter" id="card-counter">1 / 20</span>
+        </div>
+
+        <!-- 3D Flipping Flashcard -->
+        <div class="card-scene">
+          <div class="flashcard" id="flashcard">
+            
+            <!-- Front Face -->
+            <div class="card-face card-front">
+              <div class="card-top-row">
+                <span class="tier-badge" id="card-tier-badge">Tier 2 (IBPS PO)</span>
+                <div class="card-actions-group">
+                  <span class="tone-badge tone-positive" id="card-tone-badge">▲ (+) POSITIVE TONE</span>
+                  <button class="action-btn" id="card-star-btn">☆ Bookmark</button>
+                </div>
+              </div>
+
+              <div class="card-center">
+                <div class="word-display" id="card-word">Ameliorate</div>
+                <div class="phonetic-row">
+                  <span class="phonetic-txt" id="card-phonetic">/əˈmiːl.jə.reɪt/</span>
+                  <span class="pos-tag" id="card-pos">VERB</span>
+                  <button class="audio-btn" id="card-speak-btn" title="Listen to Pronunciation">🔊</button>
+                </div>
+              </div>
+
+              <div class="card-hint">
+                💡 Click card or press "Flip Card" to reveal definition, mnemonics, synonyms, and antonyms
+              </div>
+            </div>
+
+            <!-- Back Face -->
+            <div class="card-face card-back">
+              <div class="card-back-header">
+                <h3 class="card-back-title" id="back-word-title">Ameliorate</h3>
+              </div>
+
+              <div class="card-def-box" id="card-def">
+                To make something bad, unsatisfactory, or difficult become better.
+              </div>
+
+              <!-- Tone Connotation explanation -->
+              <div class="modal-section" style="margin-bottom: 0.75rem;">
+                <div class="rel-box-title">Editorial Tone Connotation</div>
+                <div style="font-size: 0.88rem; color: var(--text-secondary);" id="card-tone-explain">
+                  Denotes improvement, healing, or making a difficult economic situation better.
+                </div>
+              </div>
+
+              <!-- Synonyms & Antonyms Side-by-Side -->
+              <div class="card-rel-grid">
+                <div>
+                  <div class="rel-box-title">Key Synonyms</div>
+                  <div class="word-tags-wrap" id="card-synonyms"></div>
+                </div>
+                <div>
+                  <div class="rel-box-title">Key Antonyms</div>
+                  <div class="word-tags-wrap" id="card-antonyms"></div>
+                </div>
+              </div>
+
+              <!-- Memory Hook / Mnemonic -->
+              <div class="mnemonic-box">
+                <strong>💡 Memory Hook (Mnemonic):</strong>
+                <span id="card-mnemonic"></span>
+              </div>
+
+              <!-- Banking Context -->
+              <div class="context-box">
+                <strong>📰 Bank PO Context:</strong>
+                <span id="card-context-sentence"></span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Flashcard Controls -->
+        <div class="card-nav-controls">
+          <button class="btn btn-secondary" id="btn-prev-card">← Previous</button>
+          <button class="btn btn-primary" id="btn-flip-card">🔄 Flip Card</button>
+          <button class="btn btn-secondary" id="btn-next-card">Next →</button>
+          <button class="btn btn-outline" id="btn-shuffle-card" title="Randomize Deck">🎲 Shuffle</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 2: EXAM MCQ QUIZ -->
+    <!-- ============================================== -->
+    <section id="view-quiz" class="tab-view">
+      <div class="quiz-card">
+        <div class="quiz-header">
+          <div>
+            <span class="quiz-type-pill" id="quiz-type-tag">SYNONYM CHALLENGE</span>
+            <span style="font-size: 0.85rem; color: var(--text-secondary); margin-left: 0.5rem;" id="quiz-progress">Question 1 of 10</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-weight: 700; color: var(--brand-accent);" id="quiz-score-badge">Score: 0</span>
+            <span style="font-weight: 800; font-size: 0.95rem; color: #ef4444;" id="quiz-timer-text">20s</span>
+          </div>
+        </div>
+
+        <!-- Timer bar -->
+        <div class="timer-wrap">
+          <div class="timer-bar" id="quiz-timer-bar"></div>
+        </div>
+
+        <p class="question-prompt">Select the most direct match for:</p>
+        <div style="display: flex; align-items: baseline; gap: 0.75rem;">
+          <h2 class="question-target-word" id="quiz-word-target">Ameliorate</h2>
+          <span class="tier-badge" id="quiz-word-tier">Tier 2</span>
+        </div>
+
+        <!-- MCQ Options -->
+        <div class="options-grid" id="quiz-options"></div>
+
+        <!-- Feedback & Explanation Box -->
+        <div id="quiz-feedback-box" class="feedback-box hidden"></div>
+
+        <!-- Next Button -->
+        <div style="text-align: right; margin-top: 1rem;">
+          <button id="quiz-next-btn" class="btn btn-primary hidden">Next Question →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 3: CREATIVE TONE POLARITY CHALLENGE -->
+    <!-- ============================================== -->
+    <section id="view-polarity" class="tab-view">
+      <div class="quiz-card">
+        <div class="quiz-header">
+          <div>
+            <span class="quiz-type-pill" style="background: #fdf4ff; color: #c026d3; border: 1px solid #f5d0fe;">🎭 TONE POLARITY CLASSIFIER</span>
+            <span style="font-size: 0.85rem; color: var(--text-secondary); margin-left: 0.5rem;" id="polarity-progress">Word 1 of 10</span>
+          </div>
+          <span style="font-weight: 700; color: var(--brand-accent);" id="polarity-score">Score: 0</span>
+        </div>
+
+        <p class="question-prompt" style="margin-top: 1rem;">
+          Bank PO Reading Comprehension tests your ability to detect author's tone. Read the editorial sentence and determine if this word carries a <strong>Positive (+)</strong>, <strong>Negative (-)</strong>, or <strong>Neutral / Policy (•)</strong> connotation:
+        </p>
+
+        <h2 class="question-target-word" id="polarity-target-word" style="margin-bottom: 0.5rem;">Profligate</h2>
+        <div class="editorial-quote" id="polarity-sentence" style="font-size: 1.05rem; margin-bottom: 1.5rem;">
+          "The finance ministry cautioned public sector undertakings against profligate capital expenditures on non-productive assets."
+        </div>
+
+        <!-- Polarity Decision Buttons -->
+        <div class="polarity-buttons-row">
+          <button class="polarity-btn" data-tone="positive" onclick="App.handlePolarityChoice('positive')">
+            <span class="pol-icon">🟢</span>
+            <span class="pol-label">Positive (+)</span>
+            <span class="pol-sub">Growth, Relief, Prudence</span>
+          </button>
+          <button class="polarity-btn" data-tone="negative" onclick="App.handlePolarityChoice('negative')">
+            <span class="pol-icon">🔴</span>
+            <span class="pol-label">Negative (-)</span>
+            <span class="pol-sub">Crisis, Waste, Defiance</span>
+          </button>
+          <button class="polarity-btn" data-tone="neutral" onclick="App.handlePolarityChoice('neutral')">
+            <span class="pol-icon">🔵</span>
+            <span class="pol-label">Neutral / Policy (•)</span>
+            <span class="pol-sub">Regulatory, Deferral, Stat</span>
+          </button>
+        </div>
+
+        <!-- Feedback -->
+        <div id="polarity-feedback" class="feedback-box hidden"></div>
+
+        <div style="text-align: right; margin-top: 1rem;">
+          <button id="polarity-next-btn" class="btn btn-primary hidden">Next Word →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 4: EDITORIAL CLOZE / FILLERS -->
+    <!-- ============================================== -->
+    <section id="view-cloze" class="tab-view">
+      <div class="quiz-card">
+        <div class="quiz-header">
+          <div>
+            <span class="quiz-type-pill" style="background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0;">📰 EDITORIAL FILLERS (CLOZE)</span>
+            <span style="font-size: 0.85rem; color: var(--text-secondary); margin-left: 0.5rem;" id="cloze-progress">Passage 1 of 10</span>
+          </div>
+          <span style="font-weight: 700; color: var(--brand-accent);" id="cloze-score">Score: 0</span>
+        </div>
+
+        <p class="question-prompt" style="margin-top: 1rem;">Choose the word that fits grammatically and contextually into the editorial excerpt:</p>
+
+        <div class="cloze-passage-box" id="cloze-sentence">
+          Targeted policy interventions by the central bank helped to <span class="blank-slot">[ ? ]</span> the acute liquidity crunch in the banking sector.
+        </div>
+
+        <!-- Options -->
+        <div class="options-grid" id="cloze-options"></div>
+
+        <!-- Feedback -->
+        <div id="cloze-feedback" class="feedback-box hidden"></div>
+
+        <div style="text-align: right; margin-top: 1rem;">
+          <button id="cloze-next-btn" class="btn btn-primary hidden">Next Passage →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 5: REVIEW VAULT (MISTAKES) -->
+    <!-- ============================================== -->
+    <section id="view-mistakes" class="tab-view">
+      <div id="mistakes-list">
+        <!-- Rendered dynamically by StorageManager mistakes -->
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 6: WORD BANK & SEARCH -->
+    <!-- ============================================== -->
+    <section id="view-dict" class="tab-view">
+      <div class="dict-toolbar">
+        <input type="text" id="dict-search" class="search-input" placeholder="Search words, meanings, or synonyms...">
+        <select id="dict-tone-filter" class="select-filter">
+          <option value="all">All Tones</option>
+          <option value="positive">Positive (+) Only</option>
+          <option value="negative">Negative (-) Only</option>
+          <option value="neutral">Neutral (•) Only</option>
+        </select>
+        <select id="dict-tier-filter" class="select-filter">
+          <option value="all">All Exam Tiers</option>
+          <option value="Tier 1">Tier 1: Foundation</option>
+          <option value="Tier 2">Tier 2: IBPS PO</option>
+          <option value="Tier 3">Tier 3: SBI PO / RBI</option>
+        </select>
+      </div>
+
+      <div class="dict-table-card">
+        <table class="dict-table">
+          <thead>
+            <tr>
+              <th style="width: 40px;">⭐</th>
+              <th>Word & Part of Speech</th>
+              <th>Connotation Tone</th>
+              <th>Key Synonyms</th>
+              <th>Key Antonyms</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="dict-table-body">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Script dependencies -->
+  <script src="js/vocab-data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
